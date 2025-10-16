@@ -60,7 +60,7 @@ Registro histórico de compras y ventas.
 ## 🔄 Proceso de Normalización
 
 ### Problema Inicial
-El diseño original incluía `proveedor_id` directamente en la tabla `transaccion`, violando la **Tercera Forma Normal (3NF)** al crear una dependencia transitiva:
+El diseño original incluía `proveedor_id` directamente en la tabla `transaccion`, no respetando la **Tercera Forma Normal (3NF)** al crear una dependencia transitiva:
 
 ```
 transaccion.id → producto_id → proveedor_id (REDUNDANTE ❌)
@@ -104,24 +104,6 @@ JOIN proveedores pr ON p.proveedor_id = pr.id;
 ### Requisitos Previos
 - MySQL 5.7+ o MariaDB 10.3+
 - Cliente MySQL (MySQL Workbench, DBeaver, o CLI)
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-```bash
-git clone https://github.com/tu-usuario/sistema-inventario.git
-cd sistema-inventario
-```
-
-2. **Crear la base de datos**
-```bash
-mysql -u root -p < tablas_inventario.sql
-```
-
-3. **Ejecutar consultas de prueba**
-```bash
-mysql -u root -p sistema_inventario_db < consultas_basicas.sql
-```
 
 ---
 
@@ -183,48 +165,9 @@ Estos índices mejoran significativamente el rendimiento en:
 
 ---
 
-## 🎓 Aprendizajes Clave
 
-1. **Normalización**: Importancia de eliminar redundancia para mantener integridad
-2. **Transacciones**: Garantizar atomicidad en operaciones críticas
-3. **JOINs**: Relacionar datos distribuidos en múltiples tablas
-4. **Constraints**: Validar datos en el nivel de base de datos
-5. **Índices**: Optimizar consultas frecuentes
+## 📄
+
+Este proyecto fue desarrollado con fines educativos como parte del Bootcamp de Desarrollo Full Stack Python x Sofía Lagos :D
 
 ---
-
-## 🔮 Mejoras Futuras
-
-- [ ] Implementar procedimientos almacenados para operaciones comunes
-- [ ] Agregar triggers para auditoría automática
-- [ ] Crear vistas materializadas para reportes complejos
-- [ ] Implementar particionamiento de tabla `transaccion` por fecha
-- [ ] Añadir tabla de categorías de productos
-
----
-
-## 📚 Recursos Utilizados
-
-- [Documentación oficial de MySQL](https://dev.mysql.com/doc/)
-- [Guía de Normalización de Bases de Datos](https://www.guru99.com/database-normalization.html)
-- Material del Bootcamp de Desarrollo
-
----
-
-## 📄 Licencia
-
-Este proyecto fue desarrollado con fines educativos como parte del Bootcamp de Desarrollo.
-
----
-
-## 🤝 Contacto
-
-Si tienes preguntas o sugerencias sobre este proyecto:
-
-- 📧 Email: [tu-email@ejemplo.com]
-- 💼 LinkedIn: [tu-perfil-linkedin]
-- 🐙 GitHub: [@tu-usuario](https://github.com/tu-usuario)
-
----
-
-⭐ **Si este proyecto te fue útil, no olvides darle una estrella!**
