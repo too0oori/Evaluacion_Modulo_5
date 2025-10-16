@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS transaccion (
     CONSTRAINT fk_transaccion_producto
     FOREIGN KEY (producto_id) REFERENCES productos(id)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE,
+    ON UPDATE CASCADE
 );
 
 CREATE INDEX idx_producto_nombre ON productos(nombre);
@@ -62,9 +62,9 @@ INSERT INTO productos (nombre, descripcion, precio, stock, proveedor_id) VALUES
 
 -- Transacciones
 INSERT INTO transaccion (producto_id, tipo, fecha, cantidad) VALUES
-(1, 1, 'VENTA', '2024-09-01', 20),
-(2, 1, 'COMPRA', '2024-09-01', 30),
-(3, 1, 'VENTA', '2024-09-03', 50),
-(5, 2, 'COMPRA', '2024-09-05', 100);
+(1, 'VENTA', '2024-09-01', 20),
+(2, 'COMPRA', '2024-09-01', 30),
+(3, 'VENTA', '2024-09-03', 50),
+(5, 'COMPRA', '2024-09-05', 100);
 
 
