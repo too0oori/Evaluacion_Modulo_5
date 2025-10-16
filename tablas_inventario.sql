@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS productos (
 CREATE TABLE IF NOT EXISTS transaccion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     producto_id INT NOT NULL,
-    proveedor_id INT NOT NULL,
     tipo ENUM('COMPRA', 'VENTA') NOT NULL,
     fecha DATE NOT NULL,
     cantidad INT NOT NULL,
@@ -39,8 +38,6 @@ CREATE TABLE IF NOT EXISTS transaccion (
     FOREIGN KEY (producto_id) REFERENCES productos(id)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-
-    CONSTRAINT fk_transaccion_proveedor
     FOREIGN KEY (proveedor_id) REFERENCES proveedores(id)
     ON DELETE RESTRICT
     ON UPDATE CASCADE
@@ -67,7 +64,7 @@ INSERT INTO productos (nombre, descripcion, precio, stock, proveedor_id) VALUES
 ('Mouse Logitech MX Master 3', 'Mouse inalámbrico ergonómico con sensor de 4000 DPI', 79990.00, 50, 2);
 
 -- Transacciones
-INSERT INTO transaccion (producto_id, proveedor_id, tipo, fecha, cantidad) VALUES
+INSERT INTO transaccion (producto_id, tipo, fecha, cantidad) VALUES
 (1, 1, 'VENTA', '2024-09-01', 20),
 (2, 1, 'COMPRA', '2024-09-01', 30),
 (3, 1, 'VENTA', '2024-09-03', 50),
