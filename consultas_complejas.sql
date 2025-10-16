@@ -14,7 +14,7 @@ GROUP BY p.nombre;
 SELECT t.id AS transaccion_id, t.tipo, t.fecha, t.cantidad, p.nombre AS producto, pr.nombre AS proveedor
 FROM transaccion t
 INNER JOIN productos p ON t.producto_id = p.id
-INNER JOIN proveedores pr ON t.proveedor_id = pr.id;
+INNER JOIN proveedores pr ON p.proveedor_id = pr.id;
 
 --productos que no han tenido transacciones
 SELECT pr.id as proveedor_id, pr.nombre as proveedor, p.nombre as producto

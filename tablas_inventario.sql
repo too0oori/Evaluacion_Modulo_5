@@ -38,9 +38,6 @@ CREATE TABLE IF NOT EXISTS transaccion (
     FOREIGN KEY (producto_id) REFERENCES productos(id)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-    FOREIGN KEY (proveedor_id) REFERENCES proveedores(id)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE
 );
 
 CREATE INDEX idx_producto_nombre ON productos(nombre);

@@ -4,7 +4,7 @@ USE sistema_inventario_db;
 START TRANSACTION;
 --bloqueo de fila para evitar condiciones de carrera
 SELECT stock FROM productos WHERE id = 1 FOR UPDATE; 
-INSERT INTO transaccion (producto_id, proveedor_id, tipo, fecha, cantidad)    --  Asegúrate de que los cambios en la cantidad de inventario y las transacciones se realicen de forma atómica.
+INSERT INTO transaccion (producto_id, tipo, fecha, cantidad)    --  Asegúrate de que los cambios en la cantidad de inventario y las transacciones se realicen de forma atómica.
 VALUES (1, 1, 'COMPRA', '2024-09-01', 5);
 
 UPDATE productos
