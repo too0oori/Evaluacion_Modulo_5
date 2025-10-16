@@ -1,0 +1,144 @@
+Documentación 
+
+ 1. Documenta el proceso de creación del modelo de datos y las decisiones tomadas al diseñar las tablas, restricciones y relaciones entre entidades.
+ 2. Incluye una breve explicación de la normalización aplicada en el modelo de datos y su impacto en la estructura de la base de datos.
+ 3. Presenta ejemplos de las consultas SQL utilizadas y explica cómo funcionan.
+
+La estructura de las tablas es la siguiente:
+
+Tabla proveedores
+
+Contiene: 
+- Información de proveedores (nombre, dirección, teléfono, email)
+- Email único con validación: CHECK (email LIKE '%_@__%.__%')
+
+Tabla productos
+
+Contiene:
+- Catálogo con precio, stock y referencia a proveedor
+- DECIMAL(10,2) para precio (para evitar errores de redondeo)
+- Constraints: precio > 0, stock >= 0
+- FK a proveedores
+
+Tabla transaccion
+
+Contiene:
+- Registro compras y ventas
+- FK solo a productos (para el proveedor decidí que es mejor obtenerlo con JOIN, así se cumple la normalización 3NF)
+- Constraint: cantidad > 0
+
+En el proceso me di cuenta de que en la tabla transaccion no se cumplía la 3NF porque proveedor_id ya existe en productos.proveedor_id, por lo que se hacía reduntante.
+
+El impacto de normalizar a 3NF es que se garantiza en primer lugar la integridad con datos no duplicados. Productos y proveedores tienen sus propios PK y se relacionan a través de transaccion, con sus respectivas claves foráneas.
+
+Ejemplos de las consultas y explicación:
+
+--CONSULTAS BÁSICAS--
+
+1. Consulta básica que filtra productos con stock disponible
+
+SELECT p.stock, p.nombre
+FROM productos p
+WHERE p.stock >= 1; -> WHERE filtra solo registros con existencias mayores o iguales a 1.
+
+2. Consulta básica que recupera todos los proveedores que suministran productos específicos.
+
+SELECT pr.nombre AS proveedor, p.nombre AS producto
+FROM proveedores pr
+JOIN productos p ON pr.id = p.proveedor_id --> conecta proveedores con productos
+WHERE p.nombre = 'Laptop Dell XPS 13'; --> filtra por nombre que uno designe
+
+3. Consulta básica de las transacciones realizadas en una fecha específica.
+
+SELECT t.*, p.nombre AS producto, pr.nombre AS proveedor
+FROM transaccion t
+JOIN productos p ON t.producto_id = p.id --> se utiliza doble join para obtener la informacion completa
+JOIN proveedores pr ON p.proveedor_id = pr.id
+WHERE fecha = '2024-09-01'; --> para filtrar por fecha
+
+4. Consulta básica de selección con funciones de agrupación, como COUNT() y SUM(), para calcular el número total de productos vendidos o el valor total de las compras.
+
+SELECT SUM(cantidad) AS total_productos_vendidos --> aca SUM suma todas las cantidades de transacciones de tipo VENTA
+FROM transaccion
+WHERE tipo = 'VENTA';
+
+5. Consulta básica del valor total de las ventas por producto.
+
+SELECT p.nombre, SUM(t.cantidad) AS cantidad_vendida, SUM(t.cantidad * p.precio) AS valor_total_ventas --> aca se calcula el total de ingresos
+FROM productos p
+JOIN transaccion t ON p.id = t.producto_id
+WHERE t.tipo = 'VENTA'
+GROUP BY p.nombre; --> con GROUP BY  se agrupa por productos
+
+6. Consulta básica del valor total de las compras por producto
+
+SELECT p.nombre, SUM(t.cantidad) AS cantidad_comprada, SUM(t.cantidad * p.precio) AS valor_total_ventas
+FROM productos p
+JOIN transaccion t ON p.id = t.producto_id
+WHERE t.tipo = 'COMPRA'
+GROUP BY p.nombre;
+
+esta query es similar solo que se aplica a las compras realizadas.
+
+--CONSULTAS COMPLEJAS--
+
+1. Consulta que recupere el total de ventas de un producto durante el mes anterior.
+
+SELECT p.nombre, SUM(t.cantidad) AS total_vendido
+FROM productos p
+JOIN transaccion t ON p.id = t.producto_id
+WHERE t.tipo = 'VENTA' AND t.fecha < '2024-10-01'
+GROUP BY p.nombre;
+
+aca se filtra primero y luego se suman las ventas antes de la fecha especificada
+
+2. Consulta compleja que utilice JOINs (INNER, LEFT) para obtener información relacionada entre las tablas productos, proveedores y transacciones.
+
+SELECT t.id AS transaccion_id, t.tipo, t.fecha, t.cantidad, p.nombre AS producto, pr.nombre AS proveedor
+FROM transaccion t
+INNER JOIN productos p ON t.producto_id = p.id   ----> INNER JOIN muestra solo transacciones con producto y proveedor válidos
+INNER JOIN proveedores pr ON t.proveedor_id = pr.id;
+
+3. Consulta compleja que filtra productos sin transacciones
+
+SELECT pr.id AS proveedor_id, 
+       pr.nombre AS proveedor, 
+       p.nombre AS producto
+FROM proveedores pr
+INNER JOIN productos p ON pr.id = p.proveedor_id
+LEFT JOIN transaccion t ON p.id = t.producto_id  ---> incluye a los productos sin transacciones
+WHERE t.id IS NULL; ---> acá se filtra solo productos sin movimientos
+
+4. Consulta compleja, productos no vendidos en tal cantidad de tiempo
+
+SELECT p.id AS producto_id, 
+       p.nombre AS producto, 
+       p.stock, 
+       pr.nombre AS proveedor
+FROM productos p
+INNER JOIN proveedores pr ON p.proveedor_id = pr.id
+WHERE p.id NOT IN (  ----> NOT IN excluye esos id
+    SELECT DISTINCT t.producto_id   ---> DISTINCT evita duplicados
+    FROM transaccion t
+    WHERE t.tipo = 'VENTA' 
+      AND t.fecha >= '2024-09-01' 
+      AND t.fecha < '2024-09-30'
+);
+
+---TRANSACCION---
+
+START TRANSACTION;   ---> acá se inicia 
+--bloqueo de fila para evitar condiciones de carrera
+SELECT stock FROM productos WHERE id = 1 FOR UPDATE; ----> FOR UPDATE permite bloquear la fila para mayor limpieza en la lectura
+INSERT INTO transaccion (producto_id, proveedor_id, tipo, fecha, cantidad)    --  Asegúrate de que los cambios en la cantidad de inventario y las transacciones se realicen de forma atómica.
+VALUES (1, 1, 'COMPRA', '2024-09-01', 5);
+
+UPDATE productos
+SET stock = stock + 5
+WHERE id = 1;
+
+COMMIT;
+
+-- Verificación de la transacción
+SELECT * FROM transaccion WHERE producto_id = 1 ORDER BY id DESC;
+SELECT id, nombre, stock FROM productos WHERE id = 1;
