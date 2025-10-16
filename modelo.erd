@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -192.0646,
-    "scrollLeft": -235.2564,
+    "scrollTop": -325.3979,
+    "scrollLeft": -357.0639,
     "zoomLevel": 0.79,
     "show": 431,
     "database": 4,
@@ -488,20 +488,20 @@
       "nq1UW49HUO-acHy3lyjSn": {
         "id": "nq1UW49HUO-acHy3lyjSn",
         "tableId": "lAVBhqVUylgStqRyojssc",
-        "name": "id",
+        "name": "id_proveedor",
         "comment": "ID único del proveedor",
         "dataType": "INT",
         "default": "",
         "options": 8,
         "ui": {
           "keys": 2,
-          "widthName": 60,
+          "widthName": 72,
           "widthComment": 124,
           "widthDataType": 60,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1760582384175,
+          "updateAt": 1760643906096,
           "createAt": 1760582219652
         }
       },
@@ -622,7 +622,7 @@
           "columnIds": [
             "nq1UW49HUO-acHy3lyjSn"
           ],
-          "x": 546.578,
+          "x": 552.578,
           "y": 147.077,
           "direction": 2
         },
@@ -641,7 +641,7 @@
           "columnIds": [
             "p4OJws4hTM1F5-yYuBTkY"
           ],
-          "x": 546.578,
+          "x": 552.578,
           "y": 247.077,
           "direction": 2
         },
